@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { Users, Briefcase, GraduationCap, Building2, CheckCircle, XCircle } from 'lucide-react';
+import { Users, Briefcase, GraduationCap, Building2, CheckCircle, XCircle, Eye, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 interface Stats {
@@ -30,6 +30,10 @@ interface PendingCompany {
     profile?: {
         companyName?: string;
         companyBio?: string;
+        facebook?: string;
+        linkedin?: string;
+        twitter?: string;
+        instagram?: string;
     };
     createdAt: string;
 }
@@ -39,6 +43,8 @@ export default function AdminDashboardPage() {
     const [stats, setStats] = useState<Stats | null>(null);
     const [pendingCompanies, setPendingCompanies] = useState<PendingCompany[]>([]);
     const [loading, setLoading] = useState(true);
+    const [reviewModalOpen, setReviewModalOpen] = useState(false);
+    const [selectedCompany, setSelectedCompany] = useState<PendingCompany | null>(null);
 
     useEffect(() => {
         if (status === 'unauthenticated' || (session && session.user.role !== 'admin')) {
@@ -203,6 +209,18 @@ export default function AdminDashboardPage() {
                                         </div>
                                         <div className="flex gap-2">
                                             <Button
+                                                onClick={() => {
+                                                    setSelectedCompany(company);
+                                                    setReviewModalOpen(true);
+                                                }}
+                                                size="sm"
+                                                variant="secondary"
+                                                aria-label={`Review ${company.name} details`}
+                                            >
+                                                <Eye className="h-4 w-4 mr-1" aria-hidden="true" />
+                                                Review
+                                            </Button>
+                                            <Button
                                                 onClick={() => handleApprove(company._id)}
                                                 size="sm"
                                                 variant="primary"
@@ -262,6 +280,164 @@ export default function AdminDashboardPage() {
                         <p className="mt-1 text-sm text-gray-600">View your notifications</p>
                     </Link>
                 </div>
+
+                {/* Company Review Modal */}
+                {reviewModalOpen && selectedCompany && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+                        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                                <h2 className="text-xl font-semibold text-gray-900">Company Registration Details</h2>
+                                <button
+                                    onClick={() => {
+                                        setReviewModalOpen(false);
+                                        setSelectedCompany(null);
+                                    }}
+                                    className="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+                                    aria-label="Close modal"
+                                >
+                                    <X className="h-6 w-6" />
+                                </button>
+                            </div>
+
+                            <div className="px-6 py-6 space-y-6">
+                                {/* Basic Info */}
+                                <div>
+                                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Basic Information</h3>
+                                    <dl className="space-y-2">
+                                        <div>
+                                            <dt className="text-xs font-medium text-gray-500">Company Name</dt>
+                                            <dd className="mt-1 text-sm text-gray-900">
+                                                {selectedCompany.profile?.companyName || 'Not provided'}
+                                            </dd>
+                                        </div>
+                                        <div>
+                                            <dt className="text-xs font-medium text-gray-500">Contact Person</dt>
+                                            <dd className="mt-1 text-sm text-gray-900">{selectedCompany.name}</dd>
+                                        </div>
+                                        <div>
+                                            <dt className="text-xs font-medium text-gray-500">Email</dt>
+                                            <dd className="mt-1 text-sm text-gray-900">{selectedCompany.email}</dd>
+                                        </div>
+                                        <div>
+                                            <dt className="text-xs font-medium text-gray-500">Registration Date</dt>
+                                            <dd className="mt-1 text-sm text-gray-900">
+                                                {new Date(selectedCompany.createdAt).toLocaleString()}
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+
+                                {/* Company Description */}
+                                {selectedCompany.profile?.companyBio && (
+                                    <div>
+                                        <h3 className="text-sm font-semibold text-gray-700 mb-2">Company Description</h3>
+                                        <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                                            <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                                                {selectedCompany.profile.companyBio}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Social Media */}
+                                {(selectedCompany.profile?.linkedin ||
+                                    selectedCompany.profile?.facebook ||
+                                    selectedCompany.profile?.twitter ||
+                                    selectedCompany.profile?.instagram) && (
+                                        <div>
+                                            <h3 className="text-sm font-semibold text-gray-700 mb-3">Social Media Links</h3>
+                                            <dl className="space-y-2">
+                                                {selectedCompany.profile?.linkedin && (
+                                                    <div>
+                                                        <dt className="text-xs font-medium text-gray-500">LinkedIn</dt>
+                                                        <dd className="mt-1">
+                                                            <a
+                                                                href={selectedCompany.profile.linkedin}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-sm text-blue-600 hover:underline break-all"
+                                                            >
+                                                                {selectedCompany.profile.linkedin}
+                                                            </a>
+                                                        </dd>
+                                                    </div>
+                                                )}
+                                                {selectedCompany.profile?.facebook && (
+                                                    <div>
+                                                        <dt className="text-xs font-medium text-gray-500">Facebook</dt>
+                                                        <dd className="mt-1">
+                                                            <a
+                                                                href={selectedCompany.profile.facebook}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-sm text-blue-600 hover:underline break-all"
+                                                            >
+                                                                {selectedCompany.profile.facebook}
+                                                            </a>
+                                                        </dd>
+                                                    </div>
+                                                )}
+                                                {selectedCompany.profile?.twitter && (
+                                                    <div>
+                                                        <dt className="text-xs font-medium text-gray-500">Twitter / X</dt>
+                                                        <dd className="mt-1">
+                                                            <a
+                                                                href={selectedCompany.profile.twitter}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-sm text-blue-600 hover:underline break-all"
+                                                            >
+                                                                {selectedCompany.profile.twitter}
+                                                            </a>
+                                                        </dd>
+                                                    </div>
+                                                )}
+                                                {selectedCompany.profile?.instagram && (
+                                                    <div>
+                                                        <dt className="text-xs font-medium text-gray-500">Instagram</dt>
+                                                        <dd className="mt-1">
+                                                            <a
+                                                                href={selectedCompany.profile.instagram}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="text-sm text-blue-600 hover:underline break-all"
+                                                            >
+                                                                {selectedCompany.profile.instagram}
+                                                            </a>
+                                                        </dd>
+                                                    </div>
+                                                )}
+                                            </dl>
+                                        </div>
+                                    )}
+                            </div>
+
+                            {/* Modal Actions */}
+                            <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4 flex gap-3 justify-end">
+                                <Button
+                                    onClick={() => {
+                                        setReviewModalOpen(false);
+                                        setSelectedCompany(null);
+                                    }}
+                                    variant="secondary"
+                                >
+                                    Close
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        handleApprove(selectedCompany._id);
+                                        setReviewModalOpen(false);
+                                        setSelectedCompany(null);
+                                    }}
+                                    variant="primary"
+                                >
+                                    <CheckCircle className="h-4 w-4 mr-2" />
+                                    Approve Company
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </main>
     );
