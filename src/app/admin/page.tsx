@@ -102,6 +102,30 @@ export default function AdminDashboardPage() {
         }
     };
 
+    const handleReject = async (companyId: string) => {
+        if (!confirm('Are you sure you want to reject this company? This will permanently delete their account.')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/admin/companies/${companyId}/reject`, {
+                method: 'POST',
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Company rejected and removed successfully!');
+                fetchData(); // Refresh data
+            } else {
+                alert(data.error?.message || 'Failed to reject company');
+            }
+        } catch (error) {
+            console.error('Rejection error:', error);
+            alert('An error occurred');
+        }
+    };
+
     if (loading) {
         return (
             <main id="main-content" className="min-h-screen bg-gray-50 flex items-center justify-center">
