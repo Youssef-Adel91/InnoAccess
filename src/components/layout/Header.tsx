@@ -3,18 +3,38 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { Briefcase, GraduationCap, Bell, User, LogOut, Settings, Menu } from 'lucide-react';
-import { useState } from 'react';
+import { Briefcase, GraduationCap, Bell, User, LogOut, Settings, Menu, FileText } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export function Header() {
     const pathname = usePathname();
     const { data: session, status } = useSession();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [pendingCount, setPendingCount] = useState(0);
 
     const navigation = [
         { name: 'Jobs', href: '/jobs', icon: Briefcase },
         { name: 'Courses', href: '/courses', icon: GraduationCap },
     ];
+
+    // Fetch pending applications count for users
+    useEffect(() => {
+        if (session?.user?.role === 'user') {
+            fetchPendingCount();
+        }
+    }, [session]);
+
+    const fetchPendingCount = async () => {
+        try {
+            const response = await fetch('/api/user/applications?status=pending');
+            const data = await response.json();
+            if (data.success) {
+                setPendingCount(data.data.count || 0);
+            }
+        } catch (error) {
+            console.error('Failed to fetch pending count:', error);
+        }
+    };
 
     const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/');
 
@@ -43,8 +63,8 @@ export function Header() {
                                     key={item.name}
                                     href={item.href}
                                     className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${isActive(item.href)
-                                            ? 'bg-blue-50 text-blue-700'
-                                            : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                        ? 'bg-blue-50 text-blue-700'
+                                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                                         }`}
                                     aria-current={isActive(item.href) ? 'page' : undefined}
                                 >
@@ -53,6 +73,29 @@ export function Header() {
                                 </Link>
                             );
                         })}
+
+                        {/* My Applications - Only for users */}
+                        {session?.user?.role === 'user' && (
+                            <Link
+                                href="/user/applications"
+                                className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${isActive('/user/applications')
+                                    ? 'bg-blue-50 text-blue-700'
+                                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                    }`}
+                                aria-current={isActive('/user/applications') ? 'page' : undefined}
+                            >
+                                <FileText className="mr-2 h-4 w-4" aria-hidden="true" />
+                                My Applications
+                                {pendingCount > 0 && (
+                                    <span
+                                        className="ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-600 text-white"
+                                        aria-label={`${pendingCount} pending applications`}
+                                    >
+                                        {pendingCount}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
                     </div>
 
                     {/* Right side */}
@@ -124,8 +167,8 @@ export function Header() {
                                     key={item.name}
                                     href={item.href}
                                     className={`flex items-center px-4 py-2 rounded-md text-base font-medium transition-colors ${isActive(item.href)
-                                            ? 'bg-blue-50 text-blue-700'
-                                            : 'text-gray-700 hover:bg-gray-100'
+                                        ? 'bg-blue-50 text-blue-700'
+                                        : 'text-gray-700 hover:bg-gray-100'
                                         }`}
                                     onClick={() => setMobileMenuOpen(false)}
                                     role="menuitem"
@@ -135,6 +178,32 @@ export function Header() {
                                 </Link>
                             );
                         })}
+
+                        {/* My Applications - Only for users */}
+                        {session?.user?.role === 'user' && (
+                            <Link
+                                href="/user/applications"
+                                className={`flex items-center justify-between px-4 py-2 rounded-md text-base font-medium transition-colors ${isActive('/user/applications')
+                                    ? 'bg-blue-50 text-blue-700'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                    }`}
+                                onClick={() => setMobileMenuOpen(false)}
+                                role="menuitem"
+                            >
+                                <span className="flex items-center">
+                                    <FileText className="mr-3 h-5 w-5" aria-hidden="true" />
+                                    My Applications
+                                </span>
+                                {pendingCount > 0 && (
+                                    <span
+                                        className="px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-600 text-white"
+                                        aria-label={`${pendingCount} pending applications`}
+                                    >
+                                        {pendingCount}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
                     </div>
                 )}
             </nav>
