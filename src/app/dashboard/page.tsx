@@ -23,6 +23,11 @@ export default function DashboardPage() {
         redirect('/auth/signin');
     }
 
+    // Redirect admins to admin dashboard
+    if (session?.user?.role === 'admin') {
+        redirect('/admin');
+    }
+
     const quickActions = [
         {
             name: 'Browse Jobs',
