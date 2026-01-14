@@ -45,11 +45,21 @@ export default function CompanyJobsPage() {
 
     const fetchJobs = async () => {
         try {
+            console.log('🔍 Fetching jobs with filter:', filter);
             const response = await fetch(`/api/company/jobs?status=${filter}`);
             const data = await response.json();
 
+            console.log('📊 API Response:', {
+                success: data.success,
+                jobCount: data.data?.jobs?.length,
+                filter: filter
+            });
+
             if (data.success) {
+                console.log('✅ Setting jobs:', data.data.jobs);
                 setJobs(data.data.jobs);
+            } else {
+                console.error('❌ API Error:', data.error);
             }
         } catch (error) {
             console.error('Failed to fetch jobs:', error);
