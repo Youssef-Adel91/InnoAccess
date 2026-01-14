@@ -45,16 +45,28 @@ export default function JobPostForm({ initialData, jobId }: JobPostFormProps) {
     const [uploadingImage, setUploadingImage] = useState(false);
 
     const handleUploadImage = async (file: File) => {
+        // Check if Cloudinary is configured
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+        if (!cloudName || !uploadPreset) {
+            setErrors(prev => ({
+                ...prev,
+                companyLogo: 'Cloudinary is not configured. Please add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET to your .env.local file or skip logo upload.'
+            }));
+            return;
+        }
+
         setUploadingImage(true);
         setErrors(prev => ({ ...prev, companyLogo: '' }));
 
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || 'innoaccess');
+            formData.append('upload_preset', uploadPreset);
 
             const response = await fetch(
-                `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+                `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
                 {
                     method: 'POST',
                     body: formData,
