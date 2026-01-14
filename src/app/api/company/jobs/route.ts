@@ -35,10 +35,18 @@ const createJobSchema = z.object({
  */
 export async function POST(request: NextRequest) {
     try {
+        console.log('📝 POST /api/company/jobs - Start');
         const session = await getServerSession(authOptions);
+
+        console.log('👤 Session:', {
+            exists: !!session,
+            userId: session?.user?.id,
+            role: session?.user?.role,
+        });
 
         // Check authentication and role
         if (!session || session.user.role !== 'company') {
+            console.log('❌ Unauthorized');
             return NextResponse.json(
                 {
                     success: false,
@@ -52,10 +60,14 @@ export async function POST(request: NextRequest) {
         }
 
         await connectDB();
+        console.log('✅ Database connected');
 
         // Verify company is approved
         const company = await User.findById(session.user.id);
+        console.log('🏢 Company found:', !!company, 'Approved:', company?.isApproved);
+
         if (!company || !company.isApproved) {
+            console.log('❌ Company not approved');
             return NextResponse.json(
                 {
                     success: false,
@@ -69,10 +81,14 @@ export async function POST(request: NextRequest) {
         }
 
         const body = await request.json();
+        console.log('📋 Request body:', JSON.stringify(body, null, 2));
 
         // Server-side validation with Zod
+        console.log('🔍 Validating with Zod...');
         const validationResult = createJobSchema.safeParse(body);
+
         if (!validationResult.success) {
+            console.log('❌ Validation failed:', validationResult.error.errors);
             return NextResponse.json(
                 {
                     success: false,
@@ -86,35 +102,45 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        console.log('✅ Validation passed');
         const jobData = validationResult.data;
 
         // Create job
-        const job = await Job.create({
-            ...jobData,
-            type: jobData.location as JobType,
-            companyId: session.user.id,
-        });
+        console.log('💾 Creating job...');
+        try {
+            const job = await Job.create({
+                ...jobData,
+                type: jobData.location as JobType,
+                companyId: session.user.id,
+            });
+            console.log('✅ Job created:', job._id);
 
-        return NextResponse.json(
-            {
-                success: true,
-                data: {
-                    job,
-                    message: jobData.status === 'published'
-                        ? 'Job posted successfully!'
-                        : 'Job saved as draft',
+            return NextResponse.json(
+                {
+                    success: true,
+                    data: {
+                        job,
+                        message: jobData.status === 'published'
+                            ? 'Job posted successfully!'
+                            : 'Job saved as draft',
+                    },
                 },
-            },
-            { status: 201 }
-        );
+                { status: 201 }
+            );
+        } catch (createError: any) {
+            console.error('❌ Job creation error:', createError);
+            throw createError;
+        }
     } catch (error: any) {
-        console.error('Job creation error:', error);
+        console.error('❌ POST /api/company/jobs error:', error);
+        console.error('Error stack:', error.stack);
         return NextResponse.json(
             {
                 success: false,
                 error: {
                     message: 'Failed to create job',
                     code: 'SERVER_ERROR',
+                    details: error.message,
                 },
             },
             { status: 500 }
