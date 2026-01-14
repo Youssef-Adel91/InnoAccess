@@ -31,6 +31,7 @@ export interface IUserProfile {
     avatar?: string; // Cloudinary URL
     companyName?: string; // For company users
     companyLogo?: string; // For company users
+    companyBio?: string; // For company users - description for admin review
     accessibilityScore?: number; // For company users (1-10)
 }
 
@@ -84,6 +85,7 @@ const UserProfileSchema = new Schema<IUserProfile>({
     avatar: String,
     companyName: String,
     companyLogo: String,
+    companyBio: String, // Company description for admin review
     accessibilityScore: {
         type: Number,
         min: 1,

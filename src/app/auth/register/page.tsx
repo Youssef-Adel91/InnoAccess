@@ -14,6 +14,8 @@ export default function RegisterPage() {
         password: '',
         confirmPassword: '',
         role: 'user',
+        companyName: '',
+        companyBio: '',
     });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
@@ -36,6 +38,18 @@ export default function RegisterPage() {
             return;
         }
 
+        // Company-specific validation
+        if (formData.role === 'company') {
+            if (!formData.companyName || formData.companyName.trim().length < 2) {
+                setError('Company name is required (minimum 2 characters)');
+                return;
+            }
+            if (!formData.companyBio || formData.companyBio.trim().length < 50) {
+                setError('Company description is required (minimum 50 characters). Please describe your business and why you want to hire inclusive talent.');
+                return;
+            }
+        }
+
         setIsLoading(true);
 
         try {
@@ -49,6 +63,8 @@ export default function RegisterPage() {
                     email: formData.email,
                     password: formData.password,
                     role: formData.role,
+                    companyName: formData.role === 'company' ? formData.companyName : undefined,
+                    companyBio: formData.role === 'company' ? formData.companyBio : undefined,
                 }),
             });
 
@@ -91,7 +107,7 @@ export default function RegisterPage() {
                     <form onSubmit={handleSubmit} className="space-y-6" aria-label="Registration form">
                         {error && (
                             <div
-                                className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4"
+                                className="bg-red-50 border border-red-200 text-red-800 rounded-md p-4 text-sm"
                                 role="alert"
                                 aria-live="polite"
                             >
@@ -142,6 +158,9 @@ export default function RegisterPage() {
                                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 aria-required="true"
                             />
+                            <p className="mt-1 text-xs text-gray-500">
+                                All email providers accepted (Gmail, Yahoo, etc.)
+                            </p>
                         </div>
 
                         <div>
@@ -161,11 +180,53 @@ export default function RegisterPage() {
                                 <option value="trainer">Course Instructor</option>
                             </select>
                             {formData.role === 'company' && (
-                                <p className="mt-2 text-sm text-gray-500">
-                                    Company accounts require admin approval before posting jobs.
+                                <p className="mt-2 text-sm text-yellow-700 bg-yellow-50 p-2 rounded">
+                                    ⚠️ Company accounts require admin approval before posting jobs.
                                 </p>
                             )}
                         </div>
+
+                        {/* Company-specific fields */}
+                        {formData.role === 'company' && (
+                            <>
+                                <div>
+                                    <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
+                                        Company Name *
+                                    </label>
+                                    <input
+                                        id="companyName"
+                                        name="companyName"
+                                        type="text"
+                                        required
+                                        minLength={2}
+                                        value={formData.companyName}
+                                        onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="e.g., TechCorp Egypt"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label htmlFor="companyBio" className="block text-sm font-medium text-gray-700">
+                                        Company Description * (Min. 50 characters)
+                                    </label>
+                                    <textarea
+                                        id="companyBio"
+                                        name="companyBio"
+                                        required
+                                        minLength={50}
+                                        rows={4}
+                                        value={formData.companyBio}
+                                        onChange={(e) => setFormData({ ...formData, companyBio: e.target.value })}
+                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        placeholder="Describe your business, mission, and why you want to hire inclusive talent..."
+                                    />
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        {formData.companyBio.length}/50 characters (Admin will review this)
+                                    </p>
+                                </div>
+                            </>
+                        )}
 
                         <div>
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700">

@@ -9,9 +9,11 @@ import { hashPassword, validatePassword, validateEmail } from '@/lib/auth-utils'
  */
 const registerSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters').max(100),
-    email: z.string().email('Invalid email address'),
+    email: z.string().email('Invalid email address'), // Allow all email domains
     password: z.string().min(8, 'Password must be at least 8 characters'),
     role: z.enum([UserRole.USER, UserRole.COMPANY, UserRole.TRAINER]).default(UserRole.USER),
+    companyName: z.string().min(2).optional(),
+    companyBio: z.string().min(50, 'Company description must be at least 50 characters').optional(),
 });
 
 /**
@@ -39,9 +41,37 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { name, email, password, role } = validationResult.data;
+        const { name, email, password, role, companyName, companyBio } = validationResult.data;
 
-        // Additional email validation
+        // Additional validation for company role
+        if (role === UserRole.COMPANY) {
+            if (!companyName || companyName.trim().length < 2) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        error: {
+                            message: 'Company name is required for company accounts',
+                            code: 'VALIDATION_ERROR',
+                        },
+                    },
+                    { status: 400 }
+                );
+            }
+            if (!companyBio || companyBio.trim().length < 50) {
+                return NextResponse.json(
+                    {
+                        success: false,
+                        error: {
+                            message: 'Company description is required (minimum 50 characters)',
+                            code: 'VALIDATION_ERROR',
+                        },
+                    },
+                    { status: 400 }
+                );
+            }
+        }
+
+        // Additional email validation (removed generic domain restriction)
         if (!validateEmail(email)) {
             return NextResponse.json(
                 {
@@ -92,13 +122,23 @@ export async function POST(request: NextRequest) {
         // Hash password
         const hashedPassword = await hashPassword(password);
 
-        // Create new user
-        const user = await User.create({
+        // Create new user with profile data for companies
+        const userData: any = {
             name,
             email: email.toLowerCase(),
             password: hashedPassword,
             role,
-        });
+        };
+
+        // Add company profile data if role is company
+        if (role === UserRole.COMPANY) {
+            userData.profile = {
+                companyName: companyName?.trim(),
+                companyBio: companyBio?.trim(),
+            };
+        }
+
+        const user = await User.create(userData);
 
         // Return success response (password is automatically excluded by toJSON)
         return NextResponse.json(

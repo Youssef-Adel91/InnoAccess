@@ -188,37 +188,44 @@ export default function AdminDashboardPage() {
                             {pendingCompanies.map((company) => (
                                 <div
                                     key={company._id}
-                                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition"
+                                    className="flex flex-col p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition"
                                 >
-                                    <div>
-                                        <h3 className="font-medium text-gray-900">
-                                            {company.profile?.companyName || company.name}
-                                        </h3>
-                                        <p className="text-sm text-gray-600">{company.email}</p>
-                                        <p className="text-xs text-gray-500 mt-1">
-                                            Registered: {new Date(company.createdAt).toLocaleDateString()}
-                                        </p>
+                                    <div className="flex items-start justify-between mb-3">
+                                        <div className="flex-1">
+                                            <h3 className="font-medium text-gray-900">
+                                                {company.profile?.companyName || company.name}
+                                            </h3>
+                                            <p className="text-sm text-gray-600">{company.email}</p>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                                Registered: {new Date(company.createdAt).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                onClick={() => handleApprove(company._id)}
+                                                size="sm"
+                                                variant="primary"
+                                                aria-label={`Approve ${company.name}`}
+                                            >
+                                                <CheckCircle className="h-4 w-4 mr-1" aria-hidden="true" />
+                                                Approve
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="danger"
+                                                aria-label={`Reject ${company.name}`}
+                                            >
+                                                <XCircle className="h-4 w-4 mr-1" aria-hidden="true" />
+                                                Reject
+                                            </Button>
+                                        </div>
                                     </div>
-
-                                    <div className="flex gap-2">
-                                        <Button
-                                            onClick={() => handleApprove(company._id)}
-                                            size="sm"
-                                            variant="primary"
-                                            aria-label={`Approve ${company.name}`}
-                                        >
-                                            <CheckCircle className="h-4 w-4 mr-1" aria-hidden="true" />
-                                            Approve
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            variant="danger"
-                                            aria-label={`Reject ${company.name}`}
-                                        >
-                                            <XCircle className="h-4 w-4 mr-1" aria-hidden="true" />
-                                            Reject
-                                        </Button>
-                                    </div>
+                                    {company.profile?.companyBio && (
+                                        <div className="mt-2 p-3 bg-gray-50 rounded border border-gray-200">
+                                            <p className="text-xs font-semibold text-gray-700 mb-1">Company Description:</p>
+                                            <p className="text-sm text-gray-600">{company.profile.companyBio}</p>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
