@@ -29,6 +29,7 @@ interface PendingCompany {
     email: string;
     profile?: {
         companyName?: string;
+        companyBio?: string;
     };
     createdAt: string;
 }
