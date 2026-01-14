@@ -24,6 +24,17 @@ export default function CompanyJobsPage() {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'published' | 'draft'>('all');
 
+    // Read filter from URL on mount
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search);
+            const statusParam = params.get('status');
+            if (statusParam === 'draft' || statusParam === 'published' || statusParam === 'all') {
+                setFilter(statusParam);
+            }
+        }
+    }, []);
+
     useEffect(() => {
         if (status === 'unauthenticated' || (session && session.user.role !== 'company')) {
             redirect('/dashboard');
