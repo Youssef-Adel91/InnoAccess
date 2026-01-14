@@ -32,6 +32,10 @@ export interface IUserProfile {
     companyName?: string; // For company users
     companyLogo?: string; // For company users
     companyBio?: string; // For company users - description for admin review
+    facebook?: string; // Social media links
+    linkedin?: string;
+    twitter?: string;
+    instagram?: string;
     accessibilityScore?: number; // For company users (1-10)
 }
 
@@ -86,6 +90,10 @@ const UserProfileSchema = new Schema<IUserProfile>({
     companyName: String,
     companyLogo: String,
     companyBio: String, // Company description for admin review
+    facebook: String,
+    linkedin: String,
+    twitter: String,
+    instagram: String,
     accessibilityScore: {
         type: Number,
         min: 1,

@@ -16,6 +16,10 @@ export default function RegisterPage() {
         role: 'user',
         companyName: '',
         companyBio: '',
+        facebook: '',
+        linkedin: '',
+        twitter: '',
+        instagram: '',
     });
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState('');
@@ -65,6 +69,12 @@ export default function RegisterPage() {
                     role: formData.role,
                     companyName: formData.role === 'company' ? formData.companyName : undefined,
                     companyBio: formData.role === 'company' ? formData.companyBio : undefined,
+                    socialMedia: formData.role === 'company' ? {
+                        facebook: formData.facebook || undefined,
+                        linkedin: formData.linkedin || undefined,
+                        twitter: formData.twitter || undefined,
+                        instagram: formData.instagram || undefined,
+                    } : undefined,
                 }),
             });
 
@@ -224,6 +234,72 @@ export default function RegisterPage() {
                                     <p className="mt-1 text-xs text-gray-500">
                                         {formData.companyBio.length}/50 characters (Admin will review this)
                                     </p>
+                                </div>
+
+                                {/* Social Media Links */}
+                                <div className="border-t pt-4">
+                                    <h3 className="text-sm font-medium text-gray-900 mb-3">Social Media (Optional)</h3>
+                                    <div className="space-y-3">
+                                        <div>
+                                            <label htmlFor="linkedin" className="block text-xs font-medium text-gray-600">
+                                                LinkedIn
+                                            </label>
+                                            <input
+                                                id="linkedin"
+                                                name="linkedin"
+                                                type="url"
+                                                value={formData.linkedin}
+                                                onChange={(e) => setFormData({ ...formData, linkedin: e.target.value })}
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="https://linkedin.com/company/..."
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="facebook" className="block text-xs font-medium text-gray-600">
+                                                Facebook
+                                            </label>
+                                            <input
+                                                id="facebook"
+                                                name="facebook"
+                                                type="url"
+                                                value={formData.facebook}
+                                                onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="https://facebook.com/..."
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="twitter" className="block text-xs font-medium text-gray-600">
+                                                Twitter / X
+                                            </label>
+                                            <input
+                                                id="twitter"
+                                                name="twitter"
+                                                type="url"
+                                                value={formData.twitter}
+                                                onChange={(e) => setFormData({ ...formData, twitter: e.target.value })}
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="https://twitter.com/..."
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label htmlFor="instagram" className="block text-xs font-medium text-gray-600">
+                                                Instagram
+                                            </label>
+                                            <input
+                                                id="instagram"
+                                                name="instagram"
+                                                type="url"
+                                                value={formData.instagram}
+                                                onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                                placeholder="https://instagram.com/..."
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </>
                         )}

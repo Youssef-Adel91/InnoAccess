@@ -14,6 +14,12 @@ const registerSchema = z.object({
     role: z.enum([UserRole.USER, UserRole.COMPANY, UserRole.TRAINER]).default(UserRole.USER),
     companyName: z.string().min(2).optional(),
     companyBio: z.string().min(50, 'Company description must be at least 50 characters').optional(),
+    socialMedia: z.object({
+        facebook: z.string().url().optional().or(z.literal('')),
+        linkedin: z.string().url().optional().or(z.literal('')),
+        twitter: z.string().url().optional().or(z.literal('')),
+        instagram: z.string().url().optional().or(z.literal('')),
+    }).optional(),
 });
 
 /**
@@ -41,7 +47,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const { name, email, password, role, companyName, companyBio } = validationResult.data;
+        const { name, email, password, role, companyName, companyBio, socialMedia } = validationResult.data;
 
         // Additional validation for company role
         if (role === UserRole.COMPANY) {
@@ -135,6 +141,10 @@ export async function POST(request: NextRequest) {
             userData.profile = {
                 companyName: companyName?.trim(),
                 companyBio: companyBio?.trim(),
+                facebook: socialMedia?.facebook || undefined,
+                linkedin: socialMedia?.linkedin || undefined,
+                twitter: socialMedia?.twitter || undefined,
+                instagram: socialMedia?.instagram || undefined,
             };
         }
 
