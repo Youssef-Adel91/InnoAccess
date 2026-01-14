@@ -47,19 +47,20 @@ export default function CompanyJobsPage() {
         try {
             console.log('🔍 Fetching jobs with filter:', filter);
             const response = await fetch(`/api/company/jobs?status=${filter}`);
+
+            console.log('📡 Response status:', response.status);
+            console.log('📡 Response ok:', response.ok);
+
             const data = await response.json();
 
-            console.log('📊 API Response:', {
-                success: data.success,
-                jobCount: data.data?.jobs?.length,
-                filter: filter
-            });
+            console.log('📊 Full API Response:', data);
 
             if (data.success) {
                 console.log('✅ Setting jobs:', data.data.jobs);
                 setJobs(data.data.jobs);
             } else {
                 console.error('❌ API Error:', data.error);
+                console.error('❌ Full error response:', JSON.stringify(data, null, 2));
             }
         } catch (error) {
             console.error('Failed to fetch jobs:', error);

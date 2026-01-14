@@ -171,10 +171,18 @@ export async function GET(request: NextRequest) {
         console.log('📋 Query:', JSON.stringify(query));
 
         // Get jobs with applicant count
-        const jobs = await Job.find(query)
-            .populate('applicants')
-            .sort({ createdAt: -1 })
-            .lean();
+        let jobs;
+        try {
+            console.log('🔄 Executing Job.find...');
+            jobs = await Job.find(query)
+                .populate('applicants')
+                .sort({ createdAt: -1 })
+                .lean();
+            console.log('✅ Query executed successfully');
+        } catch (dbError: any) {
+            console.error('❌ Database query error:', dbError);
+            throw dbError;
+        }
 
         console.log('✅ Found jobs:', jobs.length);
 
