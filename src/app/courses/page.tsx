@@ -2,45 +2,13 @@ import Link from 'next/link';
 import { GraduationCap, Clock, Users, Star } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
-// Sample courses data
-const sampleCourses = [
-    {
-        id: '1',
-        title: 'Web Development Fundamentals',
-        instructor: 'Ahmed Hassan',
-        price: 49900, // in cents
-        thumbnail: 'https://res.cloudinary.com/demo/image/upload/v1/docs/placeholder.jpg',
-        rating: 4.8,
-        students: 1250,
-        duration: '12 hours',
-        modules: 8,
-        category: 'Programming',
-    },
-    {
-        id: '2',
-        title: 'Digital Marketing Essentials',
-        instructor: 'Fatima Ali',
-        price: 39900,
-        thumbnail: 'https://res.cloudinary.com/demo/image/upload/v1/docs/placeholder.jpg',
-        rating: 4.6,
-        students: 890,
-        duration: '8 hours',
-        modules: 6,
-        category: 'Marketing',
-    },
-    {
-        id: '3',
-        title: 'Data Analysis with Python',
-        instructor: 'Mohamed Ibrahim',
-        price: 59900,
-        thumbnail: 'https://res.cloudinary.com/demo/image/upload/v1/docs/placeholder.jpg',
-        rating: 4.9,
-        students: 2100,
-        duration: '15 hours',
-        modules: 10,
-        category: 'Data Science',
-    },
-];
+// NOTE: This page currently shows static UI only
+// To connect to the API, you'll need to:
+// 1. Make this a server component and fetch from API
+// 2. OR use client-side fetching with useEffect
+// For now, it shows empty state until courses are created via API
+
+const sampleCourses: any[] = []; // Empty - no fake data
 
 function formatPrice(cents: number): string {
     return `${(cents / 100).toFixed(0)} EGP`;

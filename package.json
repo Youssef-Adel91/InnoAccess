@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed:admin": "tsx scripts/seed-admin.ts"
+    "seed:admin": "tsx scripts/seed-admin.ts",
+    "clear:db": "tsx scripts/clear-db.ts"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",

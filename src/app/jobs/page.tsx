@@ -2,39 +2,11 @@ import Link from 'next/link';
 import { Briefcase, MapPin, Clock, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
-// This will be dynamic with API data later
-const sampleJobs = [
-    {
-        id: '1',
-        title: 'Frontend Developer',
-        company: 'Tech Solutions Egypt',
-        location: 'Cairo, Remote',
-        type: 'Full-time',
-        salary: '15,000 - 25,000 EGP',
-        postedAt: '2 days ago',
-        accessibilityFeatures: ['Screen reader compatible workspace', 'Flexible hours', 'Remote work'],
-    },
-    {
-        id: '2',
-        title: 'Customer Support Specialist',
-        company: 'InnoTech',
-        location: 'Alexandria, Hybrid',
-        type: 'Full-time',
-        salary: '8,000 - 12,000 EGP',
-        postedAt: '5 days ago',
-        accessibilityFeatures: ['Accessible office', 'Voice-first tools'],
-    },
-    {
-        id: '3',
-        title: 'Content Writer',
-        company: 'Digital Marketing Pro',
-        location: 'Remote',
-        type: 'Part-time',
-        salary: '5,000 - 8,000 EGP',
-        postedAt: '1 week ago',
-        accessibilityFeatures: ['100% Remote', 'Flexible schedule'],
-    },
-];
+// NOTE: This page currently shows static UI only
+// To connect to the API, you'll need to fetch from /api/jobs
+// For now, it shows empty state until jobs are created via API
+
+const sampleJobs: any[] = []; // Empty - no fake data
 
 export default function JobsPage() {
     return (
