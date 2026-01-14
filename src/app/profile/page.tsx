@@ -204,7 +204,7 @@ export default function ProfilePage() {
                                     variant="primary"
                                     onClick={handleSave}
                                     disabled={loading}
-                                    loading={loading}
+                                    isLoading={loading}
                                 >
                                     <Save className="h-4 w-4 mr-2" aria-hidden="true" />
                                     Save Changes
