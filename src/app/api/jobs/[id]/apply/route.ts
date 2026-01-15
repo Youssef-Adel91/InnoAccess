@@ -67,7 +67,7 @@ export async function POST(
         await connectDB();
 
         // Check if job exists and is published (accepting applications)
-        const job = await Job.findById(params.id);
+        const job = await Job.findById(id);
 
         if (!job) {
             console.log('❌ Job not found');
@@ -102,7 +102,7 @@ export async function POST(
 
         // Check if user already applied
         const existingApplication = await Application.findOne({
-            jobId: params.id,
+            jobId: id,
             userId: session.user.id,
         });
 
@@ -121,7 +121,7 @@ export async function POST(
 
         // Create application
         const application = await Application.create({
-            jobId: params.id,
+            jobId: id,
             userId: session.user.id,
             cvUrl: validationResult.data.cvUrl,
             coverLetter: validationResult.data.coverLetter,
