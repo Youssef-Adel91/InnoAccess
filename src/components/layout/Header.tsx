@@ -96,6 +96,21 @@ export function Header() {
                                 )}
                             </Link>
                         )}
+
+                        {/* My Jobs - Only for companies */}
+                        {session?.user?.role === 'company' && (
+                            <Link
+                                href="/company/jobs"
+                                className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${isActive('/company/jobs')
+                                    ? 'bg-blue-50 text-blue-700'
+                                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                    }`}
+                                aria-current={isActive('/company/jobs') ? 'page' : undefined}
+                            >
+                                <Briefcase className="mr-2 h-4 w-4" aria-hidden="true" />
+                                My Jobs
+                            </Link>
+                        )}
                     </div>
 
                     {/* Right side */}
@@ -202,6 +217,22 @@ export function Header() {
                                         {pendingCount}
                                     </span>
                                 )}
+                            </Link>
+                        )}
+
+                        {/* My Jobs - Only for companies */}
+                        {session?.user?.role === 'company' && (
+                            <Link
+                                href="/company/jobs"
+                                className={`flex items-center px-4 py-2 rounded-md text-base font-medium transition-colors ${isActive('/company/jobs')
+                                    ? 'bg-blue-50 text-blue-700'
+                                    : 'text-gray-700 hover:bg-gray-100'
+                                    }`}
+                                onClick={() => setMobileMenuOpen(false)}
+                                role="menuitem"
+                            >
+                                <Briefcase className="mr-3 h-5 w-5" aria-hidden="true" />
+                                My Jobs
                             </Link>
                         )}
                     </div>
