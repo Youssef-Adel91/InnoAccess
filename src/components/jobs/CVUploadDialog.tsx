@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Upload, FileText, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { uploadCVToBlob } from '@/app/actions/uploadCV';
 
 interface CVUploadDialogProps {
     isOpen: boolean;
@@ -92,41 +93,39 @@ export default function CVUploadDialog({ isOpen, onClose, onSubmit }: CVUploadDi
         setCvFile(file);
         setUploadError('');
 
-        // Check if Cloudinary is configured
-        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-        const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+        setCvUrl(''); // Clear previous URL if any
 
-        if (!cloudName || !uploadPreset) {
-            // Use placeholder URL if Cloudinary not configured
-            setCvUrl(`placeholder-cv-${file.name}`);
-            return;
-        }
-
-        // Upload to Cloudinary
         setUploading(true);
         try {
+            // Create FormData for server action
             const formData = new FormData();
-            formData.append('file', file);
-            formData.append('upload_preset', uploadPreset);
-            formData.append('resource_type', 'auto');
+            formData.append('cv', file);
 
-            const response = await fetch(
-                `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-                {
-                    method: 'POST',
-                    body: formData,
-                }
-            );
+            // Call server action to upload to Vercel Blob
+            console.log('📤 Calling uploadCVToBlob server action...');
+            // Use timestamp as unique identifier since session is not available in client component
+            const uniqueId = `user_${Date.now()}`;
+            const result = await uploadCVToBlob(formData, uniqueId);
+            console.log('📥 Upload result:', result);
 
-            const data = await response.json();
-            if (data.secure_url) {
-                setCvUrl(data.secure_url);
-            } else {
-                setUploadError('Failed to upload CV. Please try again.');
+            if (result.error) {
+                setUploadError(result.error);
+                setCvFile(null); // Clear file on error
+                return;
             }
-        } catch (error) {
+
+            if (!result.url) {
+                setUploadError('Upload succeeded but no URL returned');
+                setCvFile(null); // Clear file on error
+                return;
+            }
+
+            console.log('✅ CV URL set to:', result.url);
+            setCvUrl(result.url);
+        } catch (error: any) {
             console.error('Upload error:', error);
-            setUploadError('Failed to upload CV. Please try again.');
+            setUploadError(error.message || 'Failed to upload CV');
+            setCvFile(null); // Clear file on error
         } finally {
             setUploading(false);
         }

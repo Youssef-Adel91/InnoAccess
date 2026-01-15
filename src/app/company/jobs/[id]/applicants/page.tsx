@@ -201,16 +201,17 @@ export default function ApplicantsPage() {
 
                                                 {/* Action Buttons */}
                                                 <div className="flex gap-3 mt-4">
-                                                    {/* Only show Download CV if it's a real URL */}
-                                                    {applicant.cvUrl.startsWith('http') ? (
+                                                    {/* Direct Download CV Link */}
+                                                    {applicant.cvUrl && applicant.cvUrl.startsWith('http') ? (
                                                         <a
                                                             href={applicant.cvUrl}
-                                                            download
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
                                                             className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
-                                                            aria-label={`Download CV for ${candidateName}`}
+                                                            aria-label={`View CV for ${candidateName}`}
                                                         >
                                                             <FileText className="h-4 w-4 mr-1" />
-                                                            Download CV
+                                                            View CV
                                                         </a>
                                                     ) : (
                                                         <span className="text-xs text-gray-500 italic px-3 py-2">
