@@ -11,22 +11,13 @@ import { authOptions } from '@/lib/auth';
  */
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions);
 
         if (!session || session.user.role !== 'company') {
-            return NextResponse.json(
-                {
-                    success: false,
-                    error: {
-                        message: 'Unauthorized',
-                        code: 'UNAUTHORIZED',
-                    },
-                },
-                { status: 401 }
-            );
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         await connectDB();
