@@ -63,7 +63,7 @@ export async function GET(
  */
 export async function PATCH(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -83,7 +83,9 @@ export async function PATCH(
 
         await connectDB();
 
-        const job = await Job.findById(params.id);
+        const { id } = await params;
+
+        const job = await Job.findById(id);
 
         if (!job) {
             return NextResponse.json(
@@ -113,7 +115,7 @@ export async function PATCH(
         }
 
         const body = await request.json();
-        const updatedJob = await Job.findByIdAndUpdate(params.id, body, {
+        const updatedJob = await Job.findByIdAndUpdate(id, body, {
             new: true,
             runValidators: true,
         }).populate('companyId', 'name email profile');
@@ -143,7 +145,7 @@ export async function PATCH(
  */
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -163,7 +165,9 @@ export async function DELETE(
 
         await connectDB();
 
-        const job = await Job.findById(params.id);
+        const { id } = await params;
+
+        const job = await Job.findById(id);
 
         if (!job) {
             return NextResponse.json(
@@ -195,7 +199,7 @@ export async function DELETE(
             );
         }
 
-        await Job.findByIdAndDelete(params.id);
+        await Job.findByIdAndDelete(id);
 
         return NextResponse.json({
             success: true,
