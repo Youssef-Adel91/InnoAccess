@@ -87,7 +87,7 @@ export default function NotificationsPage() {
                     <h1 className="text-3xl font-bold text-gray-900">Notifications</h1>
                     {unreadCount > 0 && (
                         <p className="mt-2 text-gray-600">
-                            You have {unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}
+                            You have {unreadCount} unread notification{unreadCount !== 1 ? '&apos;s&apos;' : ''}
                         </p>
                     )}
                 </div>
@@ -96,7 +96,7 @@ export default function NotificationsPage() {
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
                         <Bell className="mx-auto h-12 w-12 text-gray-400" aria-hidden="true" />
                         <h3 className="mt-4 text-lg font-medium text-gray-900">No notifications</h3>
-                        <p className="mt-2 text-gray-600">You're all caught up!</p>
+                        <p className="mt-2 text-gray-600">You&apos;re all caught up!</p>
                     </div>
                 ) : (
                     <div className="space-y-3">
@@ -104,8 +104,8 @@ export default function NotificationsPage() {
                             <article
                                 key={notification._id}
                                 className={`bg-white rounded-lg shadow-sm border p-6 transition-all ${notification.isRead
-                                        ? 'border-gray-200'
-                                        : 'border-blue-300 bg-blue-50'
+                                    ? 'border-gray-200'
+                                    : 'border-blue-300 bg-blue-50'
                                     }`}
                             >
                                 <div className="flex items-start justify-between">

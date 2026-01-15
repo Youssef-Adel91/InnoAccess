@@ -61,7 +61,7 @@ export default function Home() {
                             <span className="block text-blue-200">Accessible Opportunities</span>
                         </h1>
                         <p className="mt-6 text-lg sm:text-xl text-blue-100 max-w-3xl mx-auto">
-                            InnoAccess is Egypt's first fully accessible job board and learning platform,
+                            InnoAccess is Egypt&apos;s first fully accessible job board and learning platform,
                             designed for visually impaired individuals with complete screen reader support.
                         </p>
                         <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
