@@ -8,7 +8,7 @@ import { authOptions } from '@/lib/auth';
  * POST /api/admin/companies/[id]/reject
  * Reject a company account (Admin only)
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const session = await getServerSession(authOptions);
 
