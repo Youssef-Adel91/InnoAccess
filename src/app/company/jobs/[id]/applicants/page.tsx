@@ -191,8 +191,8 @@ export default function ApplicantsPage() {
                                                 {(isAccepted || isRejected) && (
                                                     <span
                                                         className={`inline-block mt-3 px-3 py-1 text-sm font-medium rounded-full ${isAccepted
-                                                                ? 'bg-green-100 text-green-800'
-                                                                : 'bg-red-100 text-red-800'
+                                                            ? 'bg-green-100 text-green-800'
+                                                            : 'bg-red-100 text-red-800'
                                                             }`}
                                                     >
                                                         {isAccepted ? 'Accepted' : 'Rejected'}
@@ -201,15 +201,22 @@ export default function ApplicantsPage() {
 
                                                 {/* Action Buttons */}
                                                 <div className="flex gap-3 mt-4">
-                                                    <Button
-                                                        onClick={() => window.open(applicant.cvUrl, '_blank')}
-                                                        variant="secondary"
-                                                        size="sm"
-                                                        aria-label={`View CV for ${candidateName}`}
-                                                    >
-                                                        <FileText className="h-4 w-4 mr-1" />
-                                                        View CV
-                                                    </Button>
+                                                    {/* Only show View CV if it's a real URL */}
+                                                    {applicant.cvUrl.startsWith('http') ? (
+                                                        <Button
+                                                            onClick={() => window.open(applicant.cvUrl, '_blank')}
+                                                            variant="secondary"
+                                                            size="sm"
+                                                            aria-label={`View CV for ${candidateName}`}
+                                                        >
+                                                            <FileText className="h-4 w-4 mr-1" />
+                                                            View CV
+                                                        </Button>
+                                                    ) : (
+                                                        <span className="text-xs text-gray-500 italic px-3 py-2">
+                                                            CV not available (Cloudinary not configured)
+                                                        </span>
+                                                    )}
                                                     {!isAccepted && (
                                                         <Button
                                                             onClick={() => handleStatusUpdate(applicant._id, 'accepted', candidateName)}

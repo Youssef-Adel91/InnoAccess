@@ -245,7 +245,7 @@ export default function UserApplicationsPage() {
                                                 View Job
                                             </button>
                                         </Link>
-                                        {application.cvUrl && (
+                                        {application.cvUrl && application.cvUrl.startsWith('http') && (
                                             <a
                                                 href={application.cvUrl}
                                                 target="_blank"
